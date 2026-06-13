@@ -1,5 +1,6 @@
 import {
     AreasPerTickSetting,
+    IgnoreAssignedGhostsSetting,
     MaxResultsSetting,
     NegativeOutputSetting,
     RoundToStackSetting,
@@ -62,6 +63,13 @@ data.extend([
         type: "bool-setting",
         name: RoundToStackSetting,
         order: "bb",
+        setting_type: "runtime-global",
+        default_value: false
+    },
+    {
+        type: "bool-setting",
+        name: IgnoreAssignedGhostsSetting,
+        order: "bc",
         setting_type: "runtime-global",
         default_value: false
     }

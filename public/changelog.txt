@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.1.0
+Date: 2026-06-13
+  Features:
+    - Added "Ignore assigned ghosts" runtime setting (default off). When enabled, ghosts that
+      already have a construction robot dispatched (teal ghosts) are no longer counted, which
+      prevents circuit-controlled supply systems from double-requesting items while bots are
+      already carrying them. Applies to entity ghosts, tile ghosts, upgrades and module
+      (item-request) ghosts via is_registered_for_construction()/is_registered_for_upgrade().
+      With the setting off, behavior is identical to upstream Ghost Scanner 4.
+---------------------------------------------------------------------------------------------------
 Version: 4.0.6
 Date: 2025-11-30
   Bugfixes:

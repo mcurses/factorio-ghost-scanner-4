@@ -28,6 +28,7 @@ import {
 
 import {
     AreasPerTickSetting,
+    IgnoreAssignedGhostsSetting,
     MaxResultsSetting,
     NegativeOutputSetting,
     RoundToStackSetting,
@@ -86,6 +87,10 @@ if (maxResults == 0) {
 let showHidden = settings.global[ShowHiddenSetting].value as boolean;
 let invertSign = settings.global[NegativeOutputSetting].value as boolean;
 let roundToStack = settings.global[RoundToStackSetting].value as boolean;
+// When enabled, ghosts/upgrades that already have a construction robot dispatched
+// (LuaEntity.is_registered_for_construction()/is_registered_for_upgrade() == false)
+// are not counted, preventing double-requesting while bots are already on their way.
+let ignoreAssignedGhosts = settings.global[IgnoreAssignedGhostsSetting].value as boolean;
 script.on_event(defines.events.on_runtime_mod_setting_changed, event => {
     ModLog("Settings changed");
     let updateEventHandlers = false;
@@ -125,6 +130,10 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, event => {
         }
         case ScanAreasDelaySetting: {
             scanAreasDelay = settings.global[ScanAreasDelaySetting].value as number;
+            break;
+        }
+        case IgnoreAssignedGhostsSetting: {
+            ignoreAssignedGhosts = settings.global[IgnoreAssignedGhostsSetting].value as boolean;
             break;
         }
     }
@@ -396,6 +405,10 @@ const GetGhostsAsSignals = (
 
     for (const e of entities) {
         const uid = e.unit_number || e.position;
+        // Cliffs are not affected by the ignore-assigned setting: this loop already
+        // requires is_registered_for_deconstruction(force), which (like the construction
+        // variant) returns false once a robot has been dispatched, so cliffs whose
+        // explosives are already on the way are excluded regardless of the setting.
         if (
             !foundEntities.has(uid) &&
             e.is_registered_for_deconstruction(force) &&
@@ -427,7 +440,12 @@ const GetGhostsAsSignals = (
             const upgradeTarget = e.get_upgrade_target();
             const upgradePrototype = upgradeTarget[0];
             if (!foundEntities.has(uid) && upgradePrototype) {
-                if (IsInBBox(e.position, searchArea.bounds)) {
+                // is_registered_for_upgrade() is the upgrade analog of
+                // is_registered_for_construction(): false once a bot has been dispatched.
+                if (
+                    IsInBBox(e.position, searchArea.bounds) &&
+                    (!ignoreAssignedGhosts || e.is_registered_for_upgrade())
+                ) {
                     foundEntities.add(uid);
                     for (const itemStack of storage.lookupItemsToPlaceThis?.get(
                         upgradePrototype.name
@@ -456,7 +474,12 @@ const GetGhostsAsSignals = (
         for (const e of entities) {
             const uid = e.unit_number!;
             if (!foundEntities.has(uid)) {
-                if (IsInBBox(e.position, searchArea.bounds)) {
+                // Skip teal ghosts (a construction robot is already on its way) when the
+                // ignore-assigned setting is on, so we don't double-request items in flight.
+                if (
+                    IsInBBox(e.position, searchArea.bounds) &&
+                    (!ignoreAssignedGhosts || e.is_registered_for_construction())
+                ) {
                     foundEntities.add(uid);
                     for (const itemStack of storage.lookupItemsToPlaceThis?.get(e.ghost_name) ||
                         GetItemsToPlace(e.ghost_prototype)) {
@@ -493,7 +516,12 @@ const GetGhostsAsSignals = (
         countUniqueEntities = 0;
         for (const e of entities) {
             const uid = script.register_on_object_destroyed(e)[0] as UnitNumber; // abuse on_entity_destroyed to generate ids directly for proxies
-            if (!foundEntities.has(uid)) {
+            // Module/item-request proxies are also covered by is_registered_for_construction():
+            // it returns false once a bot has been dispatched to deliver the requested items.
+            if (
+                !foundEntities.has(uid) &&
+                (!ignoreAssignedGhosts || e.is_registered_for_construction())
+            ) {
                 foundEntities.add(uid);
                 for (const requestItem of e.item_requests) {
                     AddSignal(id, requestItem.name, requestItem.count, requestItem.quality);
@@ -517,7 +545,11 @@ const GetGhostsAsSignals = (
         countUniqueEntities = 0;
         for (const e of entities) {
             const uid = e.unit_number!;
-            if (!foundEntities.has(uid)) {
+            // Tile ghosts are covered by is_registered_for_construction() as well.
+            if (
+                !foundEntities.has(uid) &&
+                (!ignoreAssignedGhosts || e.is_registered_for_construction())
+            ) {
                 foundEntities.add(uid);
                 for (const itemStack of storage.lookupItemsToPlaceThis?.get(e.ghost_name) ||
                     GetItemsToPlace(e.ghost_prototype)) {
