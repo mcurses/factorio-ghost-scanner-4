@@ -4,5 +4,5 @@ const effects = data.raw["technology"]["advanced-combinators"]!.effects!;
 
 table.insert(effects as Modifier[], {
     type: "unlock-recipe",
-    recipe: "ghost-scanner"
+    recipe: "ghost-scanner-ia"
 });

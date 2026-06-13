@@ -73,7 +73,7 @@ const ModLog = (message: string) => {
     // log(message);
 };
 
-const ScannerName = "ghost-scanner";
+const ScannerName = "ghost-scanner-ia";
 
 let scanAreasPerTick = settings.global[AreasPerTickSetting].value as number;
 let updateInterval = settings.global[UpdateIntervalSetting].value as number;

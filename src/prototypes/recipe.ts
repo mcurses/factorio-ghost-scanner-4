@@ -1,8 +1,8 @@
 data.extend([
     {
         type: "recipe",
-        name: "ghost-scanner",
-        icon: "__GhostScanner4__/graphics/icons/ghost-scanner.png",
+        name: "ghost-scanner-ia",
+        icon: "__GhostScanner4IgnoreAssigned__/graphics/icons/ghost-scanner.png",
         icon_size: 32,
         enabled: false,
         ingredients: [
@@ -16,7 +16,7 @@ data.extend([
         results: [
             {
                 type: "item",
-                name: "ghost-scanner",
+                name: "ghost-scanner-ia",
                 amount: 1
             }
         ]

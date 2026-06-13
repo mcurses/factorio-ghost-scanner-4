@@ -1,9 +1,9 @@
 data.extend([
     {
         type: "item",
-        name: "ghost-scanner",
-        place_result: "ghost-scanner",
-        icon: "__GhostScanner4__/graphics/icons/ghost-scanner.png",
+        name: "ghost-scanner-ia",
+        place_result: "ghost-scanner-ia",
+        icon: "__GhostScanner4IgnoreAssigned__/graphics/icons/ghost-scanner.png",
         icon_size: 32,
         subgroup: "circuit-network",
         order: "gs-a",

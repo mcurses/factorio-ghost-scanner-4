@@ -1,6 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 4.1.0
 Date: 2026-06-13
+  Info:
+    - Side-by-side comparison build. This is a separate mod ("GhostScanner4IgnoreAssigned")
+      with its own "Ghost Scanner (Ignore Assigned)" entity (teal tint), recipe and mod
+      settings (all prefixed "ghost-scanner-ia-"), so it can run at the same time as the
+      original Ghost Scanner 4 and be placed next to it in the same logistic network for
+      direct output comparison.
   Features:
     - Added "Ignore assigned ghosts" runtime setting (default off). When enabled, ghosts that
       already have a construction robot dispatched (teal ghosts) are no longer counted, which
