@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.1.1
+Date: 2026-07-25
+  Bugfixes:
+    - Guard against destroyed scanner entities. A scanner combinator removed without firing
+      the mod's own removal events (e.g. when its surface is deleted) left a stale record in
+      storage.ghostScanners, and the next on_tick took the whole server down with
+      "LuaEntity API call when LuaEntity was invalid" in UpdateArea/UpdateSensor. Stale
+      records are now dropped instead of dereferenced.
+---------------------------------------------------------------------------------------------------
 Version: 4.1.0
 Date: 2026-06-13
   Info:
