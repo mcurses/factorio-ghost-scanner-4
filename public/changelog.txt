@@ -1,4 +1,20 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.2.0
+Date: 2026-07-25
+  Bugfixes:
+    - Ported from upstream PR Cyberboss/factorio-ghost-scanner-4#227 (thanks @leoric / @Symgot):
+      use the default count for item stacks when undefined; space-platform-foundation on space
+      platforms is now correctly detected and counted; concrete and other terrain tiles on
+      planets within logistics networks are correctly detected and counted; the quality of a
+      tile ghost entity is preserved in the signal output.
+  Changes:
+    - Ported from the same PR: refactored ghostScanner ID usage for consistency, refactored
+      space platform scan logic for clarity, and added dedicated space platform build/mine
+      handlers.
+  Info:
+    - The "Ignore assigned ghosts" setting still applies on top of all of the above, including
+      to the tile ghosts that PR #227 newly detects.
+---------------------------------------------------------------------------------------------------
 Version: 4.1.1
 Date: 2026-07-25
   Bugfixes:
