@@ -408,26 +408,32 @@ let signals: GhostsAsSignals | undefined;
 const AddSignal = (id: UnitNumber, name: string, count: number, quality?: QualityID) => {
     const indexesForID = storage.signalIndexes.get(id)!;
 
-    let item_uid = name;
-    if (quality) {
-        const prototype_name = (quality as LuaQualityPrototype).name;
-        item_uid = prototype_name ?? quality;
-    }
+    // Callers pass quality as a name string, a LuaQualityPrototype or nothing; normalize
+    // so every ghost of the same item and quality accumulates into one slot. A constant
+    // combinator section only outputs its first 1000 slots, so one slot per ghost silently
+    // drops everything scanned last (tile ghosts) once a network has ~1000 entity ghosts.
+    const qualityName =
+        quality === undefined
+            ? "normal"
+            : typeof quality === "string"
+              ? quality
+              : (quality as LuaQualityPrototype).name;
+    const item_uid = `${name}/${qualityName}`;
 
     let signalIndex = indexesForID.get(item_uid);
 
     let s: LogisticFilterWrite;
-    if (signalIndex && signals![signalIndex]) {
+    if (signalIndex !== undefined && signals![signalIndex]) {
         s = signals![signalIndex];
     } else {
         signalIndex = signals!.length;
-        indexesForID.set(name, signalIndex);
+        indexesForID.set(item_uid, signalIndex);
         s = {
             value: {
                 comparator: "=",
                 type: "item",
                 name,
-                quality
+                quality: qualityName
             },
             min: 0
         };
@@ -656,8 +662,9 @@ const GetGhostsAsSignals = (
         });
         countUniqueEntities = 0;
         for (const e of entities) {
-            // Tile ghosts do not have unit_number, use position as unique identifier
-            const uid = e.position;
+            // Tile ghosts are entities with a unit_number; a position table would be a
+            // fresh key on every lookup and double-count ghosts in overlapping cells.
+            const uid = e.unit_number!;
             // Tile ghosts are covered by is_registered_for_construction() as well.
             if (
                 !foundEntities.has(uid) &&
@@ -856,8 +863,9 @@ const GetGhostsAsSignalsForSpacePlatform = (
         });
         countUniqueEntities = 0;
         for (const e of entities) {
-            // Tile ghosts do not have unit_number, use position as unique identifier
-            const uid = e.position;
+            // Tile ghosts are entities with a unit_number; a position table would be a
+            // fresh key on every lookup and double-count ghosts in overlapping cells.
+            const uid = e.unit_number!;
             if (!foundEntities.has(uid)) {
                 foundEntities.add(uid);
                 for (const itemStack of storage.lookupItemsToPlaceThis?.get(e.ghost_name) ||
