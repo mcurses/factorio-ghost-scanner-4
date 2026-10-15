@@ -1,10 +1,10 @@
 import {
     AreasPerTickSetting,
+    FullRescanIntervalSetting,
     IgnoreAssignedGhostsSetting,
     MaxResultsSetting,
     NegativeOutputSetting,
     RoundToStackSetting,
-    ScanAreasDelaySetting,
     ShowHiddenSetting,
     UpdateIntervalSetting
 } from "./setting_names";
@@ -30,12 +30,12 @@ data.extend([
     },
     {
         type: "int-setting",
-        name: ScanAreasDelaySetting,
+        name: FullRescanIntervalSetting,
         order: "aba",
         setting_type: "runtime-global",
-        default_value: 5,
-        minimum_value: 1,
-        maximum_value: 216000 // 1h
+        default_value: 18000, // 5 min
+        minimum_value: 60,
+        maximum_value: 2592000 // 12h
     },
     {
         type: "int-setting",

@@ -1,4 +1,25 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.3.0
+Date: 2026-10-15
+  Optimizations:
+    - Ghosts are no longer found by scanning every roboport area of every network over and over.
+      Build, upgrade-mark, cliff-mark and death events now hand new ghosts, tile ghosts, item
+      request proxies, upgrades and cliffs directly to the mod, and each update only re-checks
+      those known entities. On a 54-scanner save this cut the mod's script time from about
+      1.8 ms to well under 0.1 ms per tick.
+    - Scanners in the same logistic network share one calculation.
+    - Area scans use 2 queries per area instead of 5.
+  Changes:
+    - As a safety net, every network with a scanner is still fully rescanned, spread evenly over
+      the new "Full rescan interval" setting (default 5 minutes). This catches ghosts that no event
+      reported, e.g. ones created by other mods without raising events.
+    - A newly placed scanner or roboport scans its area right away.
+    - Removed the "Area scan update interval" setting. "Scanned areas per tick" is now an upper
+      limit per tick for the area scans above.
+    - The "Ignore assigned ghosts" setting now also applies on space platforms.
+    - Added remote interface "ghost-scanner-ia" with "verify" (compares every scanner's output
+      with a brute-force scan) and "stats".
+---------------------------------------------------------------------------------------------------
 Version: 4.2.0
 Date: 2026-07-25
   Bugfixes:
