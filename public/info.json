@@ -1,11 +1,11 @@
 {
     "name": "GhostScanner4IgnoreAssigned",
-    "version": "4.3.0",
+    "version": "4.4.0",
     "title": "Ghost Scanner 4 (Ignore Assigned)",
     "author": "Dominion and Tiavor",
     "contact": "dominion on Discord. In the Factorio guild",
     "homepage": "",
     "description": "Side-by-side comparison variant of Ghost Scanner 4. Adds a separate 'Ghost Scanner (Ignore Assigned)' combinator with an option to ignore ghosts that already have a construction robot dispatched. Can run alongside the original Ghost Scanner 4.",
-    "factorio_version": "2.0",
-    "dependencies": ["base >= 2.0.0", "! GhostScanner2", "(?) GhostScanner4"]
+    "factorio_version": "2.1",
+    "dependencies": ["base >= 2.1.0", "! GhostScanner2", "(?) GhostScanner4"]
 }
